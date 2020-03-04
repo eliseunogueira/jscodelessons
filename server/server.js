@@ -1,11 +1,27 @@
-let http = require('http');
-let ourApp = http.createServer(function(req, res) {
-  if (req.url == '/') {
-    res.end('Hello, and welcome to our website');
+let express = require('express');
+let ourApp = express();
+ourApp.use(express.urlencoded({ extended: false }));
+ourApp.get('/', function(req, res) {
+  res.send(`
+  <form action="/answer" method="POST">
+  <p>What color is the sky on a clear and sunny day?</p>
+  <input name="skyColor" autocomplete="off">
+  <button>Submit Answer</button>
+  </form>
+  `);
+});
+ourApp.post('/answer', function(req, res) {
+  console.log(req.body.skyColor);
+  if (req.body.skyColor == 'blue') {
+    res.send(`
+    <p>Congrats! your answer is correct!</p>
+    <a href="/">Go Back</a>
+    `);
+  } else {
+    res.send(`
+    <p>Sorry wrong answer try again!</p>
+    <a href="/">Go Back</a>
+    `);
   }
-  if (req.url == '/about') {
-    res.end('Thank you for the interest in our company');
-  }
-  res.end('We can not found the page you are looking for');
 });
 ourApp.listen(80);
